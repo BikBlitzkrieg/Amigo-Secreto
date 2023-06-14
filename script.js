@@ -1,5 +1,5 @@
 // Array de participantes
-const participantes = [
+var participantes = [
     "Víctor",
     "Kathy",
     "Cami",
@@ -10,53 +10,58 @@ const participantes = [
     "Tita"
   ];
   
+  // Función para mezclar aleatoriamente una lista
+  function mezclar(lista) {
+    var i, j, temp;
+    for (i = lista.length - 1; i > 0; i--) {
+      j = Math.floor(Math.random() * (i + 1));
+      temp = lista[i];
+      lista[i] = lista[j];
+      lista[j] = temp;
+    }
+  }
+  
   // Función para realizar el sorteo
   function sortearAmigoSecreto(participantes) {
-    const participantesCopia = participantes.slice(); // Copiar el array de participantes
-    const numParticipantes = participantesCopia.length;
+    var parejas = [...participantes];
+    
+    mezclar(parejas);
   
-    // Comprobar si hay un número impar de participantes
-    if (numParticipantes % 2 !== 0) {
-      console.log("El número de participantes debe ser par.");
-      return;
-    }
-  
-    // Realizar el sorteo
-    const resultados = [];
-    while (participantesCopia.length > 0) {
-      const indice1 = getRandomIndex(participantesCopia.length); // Obtener un índice aleatorio
-      const participante1 = participantesCopia.slice(indice1, indice1 + 1)[0]; // Usar slice() en lugar de shift()
-      participantesCopia.splice(indice1, 1); // Eliminar el elemento del array copia
-      const indice2 = getRandomIndex(participantesCopia.length); // Obtener otro índice aleatorio
-      const participante2 = participantesCopia.splice(indice2, 1)[0]; // Eliminar el elemento del array copia
-      resultados.push({ participante1, participante2 });
+    // Verificar si hay parejas recíprocas o iguales
+    while (!verificar(participantes, parejas)) {
+      mezclar(parejas);
     }
   
     // Mostrar los resultados
-    const resultsList = document.getElementById("resultsList");
+    var resultsList = document.getElementById("resultsList");
     resultsList.innerHTML = "";
   
-    resultados.forEach((resultado) => {
-      const listItem = document.createElement("li");
-      listItem.innerText = `${resultado.participante1} => ${resultado.participante2}`;
+    for (var i = 0; i < participantes.length; i++) {
+      var listItem = document.createElement("li");
+      listItem.innerText = participantes[i] + " le regala a " + parejas[i];
       resultsList.appendChild(listItem);
-    });
+    }
   }
   
-  // Obtener un índice aleatorio
-  function getRandomIndex(max) {
-    return Math.floor(Math.random() * max);
+  // Función para verificar si hay parejas recíprocas o iguales
+  function verificar(lista1, lista2) {
+    for (var i = 0; i < lista1.length; i++) {
+      if (lista1[i] === lista2[i] || lista1.indexOf(lista2[i]) === lista2.indexOf(lista1[i])) {
+        return false;
+      }
+    }
+    return true;
   }
   
   // Manejador de evento del botón "Realizar Sorteo"
-  document.getElementById("sortButton").addEventListener("click", function() {
+  document.getElementById("sortButton").addEventListener("click", function () {
     sortearAmigoSecreto(participantes);
   });
   
   // Mostrar los participantes en la lista
-  const participantsList = document.getElementById("participantsList");
-  participantes.forEach((participante) => {
-    const listItem = document.createElement("li");
+  var participantsList = document.getElementById("participantsList");
+  participantes.forEach(function (participante) {
+    var listItem = document.createElement("li");
     listItem.innerText = participante;
     participantsList.appendChild(listItem);
   });
